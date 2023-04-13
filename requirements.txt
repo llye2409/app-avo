@@ -1,0 +1,9 @@
+streamlit
+matplotlib
+pandas
+sklearn
+seaborn
+pmdarima
+prophet
+streamlit_option_menu
+pandas_summary
