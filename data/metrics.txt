@@ -1,0 +1,6 @@
+R2: 0.9109
+MSE: 0.9099
+Adjusted_r2: 0.0834
+MAE: 0.0147
+Explained_variance: 0.9109
+RMSE: 0.9539
