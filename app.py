@@ -5,8 +5,8 @@ from lib.model_loader import *
 import datetime
 from pandas_summary import DataFrameSummary
 import seaborn as sns
-import pandas as plt
-
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import subplot
 
 
 # Page setting
