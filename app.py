@@ -9,6 +9,10 @@ import matplotlib.pyplot as plt
 from matplotlib.pyplot import subplot
 
 
+
+
+
+
 # Page setting
 st.set_page_config(page_title="My App", page_icon=":🥑:", layout="centered")
 
@@ -44,39 +48,39 @@ if add_select == 'Start prediction':
         st.subheader('Dự đoán giá bơ trung bình ở Mỹ với Regression')
         
         # Input
-#         types = st.selectbox("Type",('conventional', 'organic'),  key="selectbox_types_res")
-#         min_date = datetime.date(2015, 1, 1)
-#         max_date = datetime.date(2025, 12, 31)
-#         date_format = 'YYYY-WW'       
-#         date = st.date_input("Date", value=datetime.date(2015, 8, 18), min_value=min_date, max_value=max_date, key='date_input_res')
-#         day = date.day
-#         month = date.month
-#         year = date.year
-#         season = convert_month(month)
-#         region = st.selectbox("Region",options = regions, key='selectbox_region_res')
-#         total_volume = st.number_input('Total Volume',value=80043.78, key='number_input_total_volume')
+        types = st.selectbox("Type",('conventional', 'organic'),  key="selectbox_types_res")
+        min_date = datetime.date(2015, 1, 1)
+        max_date = datetime.date(2025, 12, 31)
+        date_format = 'YYYY-WW'       
+        date = st.date_input("Date", value=datetime.date(2015, 8, 18), min_value=min_date, max_value=max_date, key='date_input_res')
+        day = date.day
+        month = date.month
+        year = date.year
+        season = convert_month(month)
+        region = st.selectbox("Region",options = regions, key='selectbox_region_res')
+        total_volume = st.number_input('Total Volume',value=80043.78, key='number_input_total_volume')
 
-#         # Upload file
-#         st.write('Hoặc tải lên file csv để dự đoán nhiều hơn')
-#         uploaded_file = st.file_uploader("Choose a file", type=['csv'])
-#         st.markdown("Để tránh báo lỗi, vui lòng upload file csv theo định dạng mẫu [Download template CSV file](https://drive.google.com/u/0/uc?id=1njn4IW4az9nU51EcYI9k2rgbUO9bHa6E&export=download)")
+        # Upload file
+        st.write('Hoặc tải lên file csv để dự đoán nhiều hơn')
+        uploaded_file = st.file_uploader("Choose a file", type=['csv'])
+        st.markdown("Để tránh báo lỗi, vui lòng upload file csv theo định dạng mẫu [Download template CSV file](https://drive.google.com/u/0/uc?id=1njn4IW4az9nU51EcYI9k2rgbUO9bHa6E&export=download)")
     
-#         # Prediction
-#         if st.button('Start prediction', key='button_res'):
+        # Prediction
+        # if st.button('Start prediction', key='button_res'):
 
-#             if uploaded_file is not None:
-#                 # Xử lý dữ liệu upload
-#                 new_data_df = pd.read_csv(uploaded_file)
-#                 st.write('some data')
-#                 st.dataframe(new_data_df.head())
-#                 result_df = processing_new_data(new_data_df, show_download=True)
+        #     if uploaded_file is not None:
+        #         # Xử lý dữ liệu upload
+        #         new_data_df = pd.read_csv(uploaded_file)
+        #         st.write('some data')
+        #         st.dataframe(new_data_df.head())
+        #         result_df = processing_new_data(new_data_df, show_download=True)
             
-#             else:                 
-#                 # Xử lý dữ liệu inputs & predict
-#                 new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
-#                 result = reg_model.predict(new_data_clean)
-#                 # Show result
-#                 st.code('predicted results: ' + str(result))
+        #     else:                 
+        #         # Xử lý dữ liệu inputs & predict
+        #         new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
+        #         result = reg_model.predict(new_data_clean)
+        #         # Show result
+        #         st.code('predicted results: ' + str(result))
                 
  
     # Thực hiện dự đoán với model Time series
@@ -230,12 +234,8 @@ elif add_select == 'Prophet model':
     # Show the evaluation metrics
     st.subheader("Show the evaluation metrics")
     metrics = read_file_txt('data/prophec_metrics.txt')
-    st.code(metrics)     
+    st.code(metrics)
 
-    
-    
-    
-   
 
 if st.button('Train model regression', key='trainmodel'):
     
@@ -272,3 +272,5 @@ if st.button('Train model regression', key='trainmodel'):
     # Save model
     with open('models/reg_model.pkl', 'wb') as f:
         pickle.dump(et_model, f)
+
+        
