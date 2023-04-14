@@ -254,7 +254,6 @@ def plot_predicted_prices_Prophec(next_times, show_table=False, show_download=Fa
     global model_prohet_ogranic_cali
 
     # Create a dataframe with the next 60 months
-    next_times = 60
     future_next_times = model_prohet_ogranic_cali.make_future_dataframe(periods=10 + int(next_times), freq='MS')
 
     # Make a forecast for the next 60 months
@@ -338,3 +337,9 @@ def convert_month(month):
         return 3
     
 
+def dummies(x,df):
+    temp = pd.get_dummies(df[x])
+    df = pd.concat([df, temp], axis = 1)
+    df.drop([x], axis = 1, inplace = True)
+    return df
+    
