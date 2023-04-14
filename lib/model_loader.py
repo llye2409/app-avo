@@ -206,11 +206,11 @@ def plot_predicted_prices_Arima(model, next_times, show_table=False, show_downlo
     n_periods = 39
 
     # Predict next `next_times` months
-    future_price_times = model.predict(n_periods=n_periods + next_times)
+    future_price_times = model.predict(n_periods+next_times)
     future_price_times_df = pd.DataFrame(future_price_times, columns=['Prediction'])
 
     # Add a "Date" column to the DataFrame
-    last_month = pd.to_datetime('2017-06-01')  # Last month in the training data
+    last_month = pd.to_datetime('2015-01-01')  # Last month in the training data
     future_dates = pd.date_range(start=last_month, periods=len(future_price_times_df), freq='MS')
     future_price_times_df['Date'] = future_dates
 
@@ -239,6 +239,7 @@ def plot_predicted_prices_Arima(model, next_times, show_table=False, show_downlo
 
     # Show table if requested
     if show_table:
+        future_price_times_df = future_price_times_df.tail(next_times)
         st.write(future_price_times_df.set_index('Date'))
     
     if show_download:
@@ -260,7 +261,8 @@ def plot_predicted_prices_Prophec(next_times, show_table=False, show_download=Fa
     forecast_next_times = model_prohet_ogranic_cali.predict(future_next_times)
 
     # make a dataframe forcecast for user
-    forecast_next_times_df = forecast_next_times[['ds', 'trend', 'yhat']]
+    forecast_next_times_df = forecast_next_times[['ds', 'yhat']]
+    forecast_next_times_df.rename(columns={'ds': 'Date', 'yhat': 'Prediction'}, inplace=True)
 
     # Visualize the forecast for the next 60 months
     fig = model_prohet_ogranic_cali.plot(forecast_next_times, xlabel='Date', ylabel='Price')
@@ -268,7 +270,8 @@ def plot_predicted_prices_Prophec(next_times, show_table=False, show_download=Fa
 
     # Show table if requested
     if show_table:
-        st.write(forecast_next_times_df)
+        forecast_next_times_df = forecast_next_times_df.tail(next_times)
+        st.write(forecast_next_times_df.set_index('Date'))
 
     if show_download:
         data = forecast_next_times_df.to_csv().encode('utf-8')
