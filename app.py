@@ -230,43 +230,4 @@ elif add_select == 'Prophet model':
     # Show the evaluation metrics
     st.subheader("Show the evaluation metrics")
     metrics = read_file_txt('data/prophec_metrics.txt')
-    st.code(metrics)
-
-
-if st.button('Train model regression', key='trainmodel'):
-    
-     
-    X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
-    X = df[X_col]
-    y = df['AveragePrice']
-
-    # Label Encoder for 'type'
-    X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
-
-    # categorical data type conversion
-    lst_categories = ['type', 'region']
-    for col in lst_categories:
-        X[col] = pd.Categorical(X[col])
-
-    # convert categorical attribute to numeric type: get_dummies()
-    X = dummies('region',X)
-
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.model_selection import train_test_split
-    scalers = StandardScaler()
-    X_arr = scaler.fit_transform(X)
-    X = pd.DataFrame(X_arr, columns=X.columns)
-
-    # Train test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=100, test_size=0.3)
-
-    # Train model
-    from sklearn.ensemble import ExtraTreesRegressor
-    et_model = ExtraTreesRegressor()
-    et_model.fit(X_train, y_train)
-
-    # Save model
-    with open('models/reg_model.pkl', 'wb') as f:
-        pickle.dump(et_model, f)
-
-        
+    st.code(metrics)     
