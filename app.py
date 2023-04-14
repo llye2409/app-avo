@@ -10,9 +10,6 @@ from matplotlib.pyplot import subplot
 
 
 
-
-
-
 # Page setting
 st.set_page_config(page_title="My App", page_icon=":🥑:", layout="centered")
 
@@ -31,7 +28,7 @@ create_infomation_app(name_app, version_app, current_time)
 scaler = load_scaler()
 df = load_data()
 regions = load_region()
-# reg_model = load_reg_model()
+reg_model = load_reg_model()
 stepwise_model_conventional_cali = load_stepwise_model_conventional_cali_model()
 model_prohet_ogranic_cali = load_model_prohet_ogranic_cali_cali_model()
 stepwise_model_ogranic_ARIMA_sa = load_stepwise_model_ogranic_ARIMA_sa()
@@ -66,21 +63,21 @@ if add_select == 'Start prediction':
         st.markdown("Để tránh báo lỗi, vui lòng upload file csv theo định dạng mẫu [Download template CSV file](https://drive.google.com/u/0/uc?id=1njn4IW4az9nU51EcYI9k2rgbUO9bHa6E&export=download)")
     
         # Prediction
-        # if st.button('Start prediction', key='button_res'):
+        if st.button('Start prediction', key='button_res'):
 
-        #     if uploaded_file is not None:
-        #         # Xử lý dữ liệu upload
-        #         new_data_df = pd.read_csv(uploaded_file)
-        #         st.write('some data')
-        #         st.dataframe(new_data_df.head())
-        #         result_df = processing_new_data(new_data_df, show_download=True)
+            if uploaded_file is not None:
+                # Xử lý dữ liệu upload
+                new_data_df = pd.read_csv(uploaded_file)
+                st.write('some data')
+                st.dataframe(new_data_df.head())
+                result_df = processing_new_data(new_data_df, show_download=True)
             
-        #     else:                 
-        #         # Xử lý dữ liệu inputs & predict
-        #         new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
-        #         result = reg_model.predict(new_data_clean)
-        #         # Show result
-        #         st.code('predicted results: ' + str(result))
+            else:                 
+                # Xử lý dữ liệu inputs & predict
+                new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
+                result = reg_model.predict(new_data_clean)
+                # Show result
+                st.code('predicted results: ' + str(result))
                 
  
     # Thực hiện dự đoán với model Time series
@@ -237,40 +234,40 @@ elif add_select == 'Prophet model':
     st.code(metrics)
 
 
-if st.button('Train model regression', key='trainmodel'):
+# if st.button('Train model regression', key='trainmodel'):
     
-    # Train model
-    X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
-    X = df[X_col]
-    y = df['AveragePrice']
+#     # Train model
+#     X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
+#     X = df[X_col]
+#     y = df['AveragePrice']
 
-    # Label Encoder for 'type'
-    X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
+#     # Label Encoder for 'type'
+#     X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
 
-    # categorical data type conversion
-    lst_categories = ['type', 'region']
-    for col in lst_categories:
-        X[col] = pd.Categorical(X[col])
+#     # categorical data type conversion
+#     lst_categories = ['type', 'region']
+#     for col in lst_categories:
+#         X[col] = pd.Categorical(X[col])
 
-    # convert categorical attribute to numeric type: get_dummies()
-    X = dummies('region',X)
+#     # convert categorical attribute to numeric type: get_dummies()
+#     X = dummies('region',X)
 
-    from sklearn.preprocessing import StandardScaler
-    from sklearn.model_selection import train_test_split
-    scalers = StandardScaler()
-    X_arr = scaler.fit_transform(X)
-    X = pd.DataFrame(X_arr, columns=X.columns)
+#     from sklearn.preprocessing import StandardScaler
+#     from sklearn.model_selection import train_test_split
+#     scalers = StandardScaler()
+#     X_arr = scaler.fit_transform(X)
+#     X = pd.DataFrame(X_arr, columns=X.columns)
 
-    # Train test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=100, test_size=0.3)
+#     # Train test split
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=100, test_size=0.3)
 
-    # Train model
-    from sklearn.ensemble import ExtraTreesRegressor
-    et_model = ExtraTreesRegressor()
-    et_model.fit(X_train, y_train)
+#     # Train model
+#     from sklearn.ensemble import ExtraTreesRegressor
+#     et_model = ExtraTreesRegressor()
+#     et_model.fit(X_train, y_train)
 
-    # Save model
-    with open('models/reg_model.pkl', 'wb') as f:
-        pickle.dump(et_model, f)
+#     # Save model
+#     with open('models/reg_model.pkl', 'wb') as f:
+#         pickle.dump(et_model, f)
 
         
