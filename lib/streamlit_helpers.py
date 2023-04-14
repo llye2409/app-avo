@@ -1,12 +1,19 @@
 import streamlit as st
 from lib.streamlit_helpers import *
 from lib.model_loader import *
+import time
 
 
 # Ìnormation app
 name_app = 'Avocado app'
 version_app = '1.0'
 current_time = '2023-04-10 11:16:58'
+
+def loading(times):
+    with st.spinner('Đang tải...'):
+        time.sleep(times)
+    
+    st.write('Hoàn tất!')
 
 def create_contact_form():
     # contact form
