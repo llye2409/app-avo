@@ -6,6 +6,8 @@ import pandas as pd
 from prophet.plot import add_changepoints_to_plot
 from lib.streamlit_helpers import *
 import streamlit as st
+from sklearn.ensemble import RandomForestRegressor
+
 
 # Khởi tạo biến toàn cục để lưu model và dữ liệu
 reg_model = None
@@ -13,6 +15,7 @@ stepwise_model_conventional_cali = None
 model_prohet_ogranic_cali = None
 stepwise_model_ogranic_ARIMA_sa = None
 stepwise_model_conventional_Arima_la = None
+rf_model_avocado_totalVolume = None
 df = None
 df_timeseries = None
 df_conventional = None
@@ -34,6 +37,20 @@ def load_reg_model():
         reg_model = pickle.load(file)
     
     return reg_model
+
+def load_rf_model_avocado_totalVolume():
+    global rf_model_avocado_totalVolume
+    
+    # Nếu model đã được load trước đó thì không cần load lại
+    if rf_model_avocado_totalVolume is not None:
+        return rf_model_avocado_totalVolume
+    
+    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
+    pkl_filename = 'models/rf_model_avocado_totalVolume.pkl'
+    with open(pkl_filename, 'rb') as file:  
+        rf_model_avocado_totalVolume = pickle.load(file)
+    
+    return rf_model_avocado_totalVolume
 
 def load_stepwise_model_conventional_cali_model():
     global stepwise_model_conventional_cali
@@ -202,6 +219,26 @@ def processing_for_new_ppredict(total_volume, types, year, month, day, season, r
     return new_data_clean
 
 
+def processing_for_ppredict_totalVolume(types, year, month, day, season, region):
+    global regions
+    
+    # label coder
+    types_avocado = 0 if types == 'conventional' else 1
+    # tạo dataframe
+    new_data = pd.DataFrame([{
+                        'type': types_avocado,
+                        'year': year,
+                        'month': month,
+                        'day': day,
+                        'Season': season}])
+
+    # Create region columns
+    for i in regions:
+        new_data[i] = 1 if i == region else 0
+    
+    return new_data
+
+
 def plot_predicted_prices_Arima(model, next_times, show_table=False, show_download=False):
     n_periods = 39
 
@@ -238,12 +275,13 @@ def plot_predicted_prices_Arima(model, next_times, show_table=False, show_downlo
     ax.legend()
 
     # Show table if requested
+    future_price_times_df = future_price_times_df.reindex(columns=['Date', 'Prediction'])
+    future_price_times_df_show = future_price_times_df.tail(next_times).reset_index(drop=True)
     if show_table:
-        future_price_times_df = future_price_times_df.tail(next_times)
-        st.write(future_price_times_df.set_index('Date'))
+        st.write(future_price_times_df_show.set_index('Date'))
     
     if show_download:
-        data = future_price_times_df.to_csv().encode('utf-8')
+        data = future_price_times_df_show.to_csv().encode('utf-8')
         st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
 
     plt.close()  # Close the plot to avoid duplicate plots in Streamlit
@@ -269,21 +307,23 @@ def plot_predicted_prices_Prophec(next_times, show_table=False, show_download=Fa
     ax = add_changepoints_to_plot(fig.gca(), model_prohet_ogranic_cali, forecast_next_times)
 
     # Show table if requested
+    forecast_next_times_df_show = forecast_next_times_df.tail(next_times).reset_index(drop=True)
     if show_table:
-        forecast_next_times_df = forecast_next_times_df.tail(next_times)
-        st.write(forecast_next_times_df.set_index('Date'))
+        st.write(forecast_next_times_df_show.set_index('Date'))
 
     if show_download:
-        data = forecast_next_times_df.to_csv().encode('utf-8')
+        data = forecast_next_times_df_show.to_csv().encode('utf-8')
         st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
 
     plt.close()  # Close the plot to avoid duplicate plots in Streamlit
 
     return fig, ax
 
-def processing_new_data(new_data_df, show_download=False):
+def processing_new_data(new_data_df):
     global scaler, reg_model
     
+    # Tạo thêm cột season
+    new_data_df['Season'] = new_data_df.month.apply(lambda x: convert_month(x))
     X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
     X_new_data = new_data_df[X_col]
 
@@ -311,15 +351,8 @@ def processing_new_data(new_data_df, show_download=False):
     # Result
     result_df = new_data_df[['TotalVolume', 'region']]
     result_df['Prediction'] = arr_predicted
-    
-    # Show result
-    st.write('Results:')
-    st.dataframe(result_df.head())
 
-    # Show download file csv
-    if show_download:
-        data = result_df.to_csv().encode('utf-8')
-        st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
+    return result_df
 
 
 def read_file_txt(file_name):
