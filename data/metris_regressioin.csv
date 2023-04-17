@@ -1,0 +1,7 @@
+Model,R2,MSE,Adj R2,MAE,Ev,RMSE
+Linear Regression,0.58,0.2,0.2,0.07,0.58,0.76
+KNeighborsRegressor,0.77,0.77,0.14,0.04,0.77,0.88
+DecisionTreeRegressor,0.79,0.79,0.12,0.03,0.79,0.89
+RandomForestRegressor,0.89,0.89,0.09,0.02,0.89,0.94
+ExtraTreesRegressor,0.91,0.91,0.08,0.01,0.91,0.95
+XGBRegressor,0.89,0.89,0.1,0.02,0.89,0.94
