@@ -26,11 +26,11 @@ create_contact_form()
 # Infomations app
 create_infomation_app(name_app, version_app, current_time)
 # ------- lOAD MODEL----------
-# reg_model = load_reg_model()
+reg_model = load_reg_model()
 df = load_data()
 scaler = load_scaler()
 regions = load_region()
-# rf_model_avocado_totalVolume = load_rf_model_avocado_totalVolume()
+rf_model_avocado_totalVolume = load_rf_model_avocado_totalVolume()
 stepwise_model_conventional_cali = load_stepwise_model_conventional_cali_model()
 model_prohet_ogranic_cali = load_model_prohet_ogranic_cali_cali_model()
 stepwise_model_ogranic_ARIMA_sa = load_stepwise_model_ogranic_ARIMA_sa()
@@ -61,9 +61,8 @@ if add_select == 'Start prediction':
         
         region = st.selectbox("Region",options = regions, key='selectbox_region_res')
         
-        #df_for_predict_totalVolume = processing_for_ppredict_totalVolume(types, year, month, day, season, region)
-        #total_volume_suggest = rf_model_avocado_totalVolume.predict(df_for_predict_totalVolume)
-        total_volume_suggest = 100
+        df_for_predict_totalVolume = processing_for_ppredict_totalVolume(types, year, month, day, season, region)
+        total_volume_suggest = rf_model_avocado_totalVolume.predict(df_for_predict_totalVolume)
         total_volume = st.slider('Select a value', 100, 2300000, int(total_volume_suggest), step=None, key='slider_input_total_volume')
 
         # Upload file
@@ -284,62 +283,58 @@ elif add_select == 'Prophet model':
     metrics = read_file_txt('data/prophec_metrics.txt')
     st.code(metrics)
 
+# if st.button('pre-train model'):
+
+#     X_col = ['type', 'year', 'month', 'day', 'Season', 'region']
+#     X = df[X_col]
+#     y = df['TotalVolume']
+
+#     # Label Encoder for 'type'
+#     X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
+
+#     # categorical data type conversion
+#     lst_categories = ['type', 'region']
+#     for col in lst_categories:
+#         X[col] = pd.Categorical(X[col])
+
+#     # convert categorical attribute to numeric type: get_dummies()
+#     X = dummies('region',X)
+
+#     # Define the model RandomForestRegressor
+#     rf_model_totalVolumne = RandomForestRegressor()
+#     rf_model_totalVolumne.fit(X, y)
+
+#     # Save model
+#     with open('models/rf_model_avocado_totalVolume.pkl', 'wb') as f:
+#         pickle.dump(rf_model_totalVolumne, f)
 
 
+#     # Train model
+#     X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
+#     X = df[X_col]
+#     y = df['AveragePrice']
 
+#     # Label Encoder for 'type'
+#     X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
 
-if st.button('pre-train model'):
+#     # categorical data type conversion
+#     lst_categories = ['type', 'region']
+#     for col in lst_categories:
+#         X[col] = pd.Categorical(X[col])
 
-    X_col = ['type', 'year', 'month', 'day', 'Season', 'region']
-    X = df[X_col]
-    y = df['TotalVolume']
+#     # convert categorical attribute to numeric type: get_dummies()
+#     X = dummies('region',X)
 
-    # Label Encoder for 'type'
-    X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
+#     scalers = StandardScaler()
+#     X_arr = scaler.fit_transform(X)
+#     X = pd.DataFrame(X_arr, columns=X.columns)
 
-    # categorical data type conversion
-    lst_categories = ['type', 'region']
-    for col in lst_categories:
-        X[col] = pd.Categorical(X[col])
+#     # Train model
+#     from sklearn.ensemble import RandomForestRegressor
+#     # Define the model RandomForestRegressor
+#     rf_model = RandomForestRegressor()
+#     rf_model.fit(X, y)
 
-    # convert categorical attribute to numeric type: get_dummies()
-    X = dummies('region',X)
-
-    # Define the model RandomForestRegressor
-    rf_model_totalVolumne = RandomForestRegressor()
-    rf_model_totalVolumne.fit(X, y)
-
-    # Save model
-    with open('models/rf_model_avocado_totalVolume.pkl', 'wb') as f:
-        pickle.dump(rf_model_totalVolumne, f)
-
-
-    # Train model
-    X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
-    X = df[X_col]
-    y = df['AveragePrice']
-
-    # Label Encoder for 'type'
-    X['type'] = X['type'].replace({'conventional': 0, 'organic': 1})
-
-    # categorical data type conversion
-    lst_categories = ['type', 'region']
-    for col in lst_categories:
-        X[col] = pd.Categorical(X[col])
-
-    # convert categorical attribute to numeric type: get_dummies()
-    X = dummies('region',X)
-
-    scalers = StandardScaler()
-    X_arr = scaler.fit_transform(X)
-    X = pd.DataFrame(X_arr, columns=X.columns)
-
-    # Train model
-    from sklearn.ensemble import RandomForestRegressor
-    # Define the model RandomForestRegressor
-    rf_model = RandomForestRegressor()
-    rf_model.fit(X, y)
-
-    # Save model
-    with open('models/reg_model.pkl', 'wb') as f:
-        pickle.dump(rf_model, f)
+#     # Save model
+#     with open('models/reg_model.pkl', 'wb') as f:
+#         pickle.dump(rf_model, f)
