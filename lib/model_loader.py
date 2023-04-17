@@ -1,381 +1,115 @@
-import pandas as pd
-import pickle
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-from prophet.plot import add_changepoints_to_plot
-from lib.streamlit_helpers import *
 import streamlit as st
-from sklearn.ensemble import RandomForestRegressor
+from lib.streamlit_helpers import *
+from lib.model_loader import *
+import time
 
 
-# Khởi tạo biến toàn cục để lưu model và dữ liệu
-reg_model = None
-stepwise_model_conventional_cali = None
-model_prohet_ogranic_cali = None
-stepwise_model_ogranic_ARIMA_sa = None
-stepwise_model_conventional_Arima_la = None
-rf_model_avocado_totalVolume = None
-df = None
-df_timeseries = None
-df_conventional = None
-df_organic = None
-regions = None
-scaler = None
+# Ìnormation app
+name_app = 'Avocado app'
+version_app = '1.0'
+current_time = '2023-04-10 11:16:58'
 
-
-def load_reg_model():
-    global reg_model
+def loading(times):
+    with st.spinner('Đang tải...'):
+        time.sleep(times)
     
-    # Nếu model đã được load trước đó thì không cần load lại
-    if reg_model is not None:
-        return reg_model
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/reg_model.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        reg_model = pickle.load(file)
-    
-    return reg_model
+    st.write('Hoàn tất!')
 
-def load_rf_model_avocado_totalVolume():
-    global rf_model_avocado_totalVolume
-    
-    # Nếu model đã được load trước đó thì không cần load lại
-    if rf_model_avocado_totalVolume is not None:
-        return rf_model_avocado_totalVolume
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/rf_model_avocado_totalVolume.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        rf_model_avocado_totalVolume = pickle.load(file)
-    
-    return rf_model_avocado_totalVolume
+def create_contact_form():
+    # contact form
+    with st.sidebar:
+        st.write('Send us your feedback!')
+        name_input = st.text_input('Your name')
+        comment_input = st.text_area('Your comment')
+        submitted = st.button('Submit')
 
-def load_stepwise_model_conventional_cali_model():
-    global stepwise_model_conventional_cali
-    
-    # Nếu model đã được load trước đó thì không cần load lại
-    if stepwise_model_conventional_cali is not None:
-        return stepwise_model_conventional_cali
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/stepwise_model_conventional_cali.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        stepwise_model_conventional_cali = pickle.load(file)
-    
-    return stepwise_model_conventional_cali
+        # Nếu người dùng đã gửi đánh giá, thêm đánh giá vào dataframe
+        if submitted:
+            # Thêm đánh đánh giá người dùng vào file txt
+            pass
 
-def load_model_prohet_ogranic_cali_cali_model():
-    global model_prohet_ogranic_cali
-    
-    # Nếu model đã được load trước đó thì không cần load lại
-    if model_prohet_ogranic_cali is not None:
-        return model_prohet_ogranic_cali
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/model_prohet_ogranic_cali.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        model_prohet_ogranic_cali = pickle.load(file)
-    
-    return model_prohet_ogranic_cali
+def create_infomation_app(name_app, version_app, current_time):
+    # Infomations app
+    st.sidebar.markdown(
+        """
+        <div style='position: fixed; bottom: 0'>
+            <p> """+ name_app +""" - Version: """+ version_app +""" </br>(For predicting avocado prices in the US)</p>
+            <p><i>Last Updated: """+ current_time +"""<i/></p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-def load_stepwise_model_ogranic_ARIMA_sa():
-    global stepwise_model_ogranic_ARIMA_sa
-    
-    # Nếu model đã được load trước đó thì không cần load lại
-    if stepwise_model_ogranic_ARIMA_sa is not None:
-        return stepwise_model_ogranic_ARIMA_sa
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/stepwise_model_ogranic_ARIMA_sa.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        stepwise_model_ogranic_ARIMA_sa = pickle.load(file)
-    
-    return stepwise_model_ogranic_ARIMA_sa
+def create_introdution_app():
+    st.image('assets/images/avocado.png')
+    st.markdown("""
+    ## Business Issue
+    "Hass" Avocado - a company based in Mexico, specializes in producing various types of avocados sold in the US.
+    The company operates in multiple regions of the US with 2 types of avocados, regular and organic,
+    packaged according to various standards (Small/Large/XLarge Bags), and have 3 different PLUs (Product Look Up) (4046, 4225, 4770).
+    However, they do not have a model to predict avocado prices for business expansion.
 
-def load_stepwise_model_conventional_Arima_la():
-    global stepwise_model_conventional_Arima_la
-    
-    # Nếu model đã được load trước đó thì không cần load lại
-    if stepwise_model_conventional_Arima_la is not None:
-        return stepwise_model_conventional_Arima_la
-    
-    # Nếu model chưa được load thì load model từ file pkl và lưu vào biến toàn cục
-    pkl_filename = 'models/stepwise_model_conventional_Arima_la.pkl'
-    with open(pkl_filename, 'rb') as file:  
-        stepwise_model_conventional_Arima_la = pickle.load(file)
-    
-    return stepwise_model_conventional_Arima_la
+    => **Objective**: Build a model to predict the average price of "Hass" avocados in the US => consider expanding production and business
 
-st.cache
-def load_data():
-    global df
-    
-    # Nếu dữ liệu đã được đọc trước đó thì không cần đọc lại
-    if df is not None:
-        return df
-    
-    # Nếu dữ liệu chưa được đọc thì đọc dữ liệu từ file CSV và lưu vào biến toàn cục
-    csv_filename = 'data/avocado_new.csv'
-    df = pd.read_csv(csv_filename)
-    
-    return df
+    ## Specific requirements:
+    - **Task 1**: USA's Avocado Average Price
+    Prediction - Use regression algorithms
+    such as Linear Regression, Random Forest,
+    XGB Regressor...
 
-st.cache
-def load_data_timeseries():
-    global df_timeseries
-
-    # Nếu dữ liệu đã được đọc trước đó thì không cần đọc lại
-    if df_timeseries is not None:
-        return df_timeseries
-    
-    # Nếu dữ liệu chưa được đọc thì đọc dữ liệu từ file CSV và lưu vào biến toàn cục
-    csv_filename = 'data/avocado.csv'
-    df_timeseries = pd.read_csv(csv_filename)
-   
-    return df_timeseries
-
-st.cache
-def data_preparation_organic():
-    global df_organic, df_timeseries
-
-    # Nếu dữ liệu đã được đọc trước đó thì không cần đọc lại
-    if df_organic is not None:
-        return df_organic
-    
-    # create data organic
-    df_organic = df_timeseries[(df_timeseries.type == 'organic') & (df_timeseries.region == 'California')][['Date', 'AveragePrice']]
-    # Group theo month
-    agg = {'AveragePrice': 'mean'}
-    df_organic = df_organic.groupby(df_organic['Date']).aggregate(agg).reset_index()
-    
-    return df_organic
-
-st.cache
-def data_preparation_conventional():
-    global df_conventional, df_timeseries
-
-    # Nếu dữ liệu đã được đọc trước đó thì không cần đọc lại
-    if df_conventional is not None:
-        return df_conventional
-    
-    # create data organic
-    df_conventional = df_timeseries[(df_timeseries.type == 'conventional') & (df_timeseries.region == 'California')][['Date', 'AveragePrice']]
-    # Group theo month
-    agg = {'AveragePrice': 'mean'}
-    df_conventional = df_conventional.groupby(df_conventional['Date']).aggregate(agg).reset_index()
-    
-    return df_conventional
+    - **Task 2**: Conventional/Organic Avocado
+    Average Price Prediction for the future in
+    California/NewYork... - Use time series
+    algorithms such as ARIMA, Prophet...
 
 
-def load_region():
-    global regions
+    ### USA's Avocado AveragePrice Prediction
+    - Using *RandomForestRegressor* to predict avocado prices.
+    - The regression model achieved an accuracy of *90%* on the test set.
+    - It can be applied in practice to predict the average avocado prices in the US.
+    However, the model needs to be carefully used and evaluated regularly to ensure the accuracy of predictions.
+    Additionally, when applying the model to new data, it's important to check if the new data is similar to the data used for training.
 
-    if regions is not None:
-        return regions
-    
-    # Nếu dữ liệu chưa được đọc
-    with open('data/regions.txt', 'r') as f:
-        regions = f.read().splitlines()
+    ### Average Price Prediction in California & Other
+   -  Arima model: California (conventional), Los Angeles (organic), San Francisco (conventional)
+    - Facebook Prophet: California (organic)
+    - Potential regions: Los Angeles, San Francisco. The results show that avocado prices are trending upward in the next 5 years.
+    - In practice, the models have good prediction capabilities for data up to 5 years ago.
 
-    return regions
+    ### Selecting potential regions for organic avocados
+    => **Los Angeles** is a potential region due to its large scale (total sales), increasing price trends over the years, and high growth rate.
 
+    => **San Francisco** is a potential region due to its large scale (total sales), increasing price trends over the years, and high growth rate
 
-def load_scaler():
-    global scaler
-    
-    # Nếu scaler chưa tải
-    if scaler is not None:
-        return scaler
-    
-    # Nếu scaler chưa được load scaler
-    with open('models/scaler.pkl', 'rb') as f:
-        scaler = pickle.load(f)
-    
-    return scaler
+    ## User guide:
+    To use the application, you select the corresponding tabs for the regions you want to predict. Then, choose the options and enter the input parameters to predict avocado prices for a period of 1 to 5 years.
 
-def processing_for_new_ppredict(total_volume, types, year, month, day, season, region):
-    global scaler, regions
-    
-    # label coder
-    types_avocado = 0 if types == 'conventional' else 1
-    # tạo dataframe
-    new_data = pd.DataFrame([{'TotalVolume': total_volume,
-                        'type': types_avocado,
-                        'year': year,
-                        'month': month,
-                        'day': day,
-                        'Season': season}])
+    However, we also want to emphasize that the model achieves only about 90% accuracy on the test set and works well for predicting data up to about 5 years in advance.
 
-    # Create region columns
-    for i in regions:
-        new_data[i] = 1 if i == region else 0
+    We hope that our application will help you predict avocado prices accurately and efficiently. Thank you for using our application!
 
-    # Scaler
-    new_data_arr = scaler.transform(new_data)
-    new_data_clean = pd.DataFrame(new_data_arr, columns=new_data.columns)
-    
-    return new_data_clean
-
-
-def processing_for_ppredict_totalVolume(types, year, month, day, season, region):
-    global regions
-    
-    # label coder
-    types_avocado = 0 if types == 'conventional' else 1
-    # tạo dataframe
-    new_data = pd.DataFrame([{
-                        'type': types_avocado,
-                        'year': year,
-                        'month': month,
-                        'day': day,
-                        'Season': season}])
-
-    # Create region columns
-    for i in regions:
-        new_data[i] = 1 if i == region else 0
-    
-    return new_data
-
-
-def plot_predicted_prices_Arima(model, next_times, show_table=False, show_download=False):
-    n_periods = 39
-
-    # Predict next `next_times` months
-    future_price_times = model.predict(n_periods+next_times)
-    future_price_times_df = pd.DataFrame(future_price_times, columns=['Prediction'])
-
-    # Add a "Date" column to the DataFrame
-    last_month = pd.to_datetime('2015-01-01')  # Last month in the training data
-    future_dates = pd.date_range(start=last_month, periods=len(future_price_times_df), freq='MS')
-    future_price_times_df['Date'] = future_dates
-
-    # Compute coefficients of linear regression
-    x = np.arange(len(future_price_times_df))
-    y = future_price_times_df['Prediction']
-    coef = np.polyfit(x, y, 1)
-
-    # Create linear regression object
-    trendline = np.poly1d(coef)
-
-    # Create a list of years
-    years = pd.date_range(start='2015-01-01', periods=len(future_price_times_df), freq='MS').year
-
-    # Plot the predicted prices and trendline
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(x, y, label='Predicted')
-    ax.plot(x, trendline(x), 'r--', label='Trendline')
-    ax.axvline(x=n_periods, color='r', linestyle='--')
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price')
-    ax.set_title('Predicted Average Price of Conventional Avocado in California')
-    ax.set_xticks(x[::12])
-    ax.set_xticklabels(years[::12])
-    ax.legend()
-
-    # Show table if requested
-    future_price_times_df = future_price_times_df.reindex(columns=['Date', 'Prediction'])
-    future_price_times_df_show = future_price_times_df.tail(next_times).reset_index(drop=True)
-    if show_table:
-        st.write(future_price_times_df_show.set_index('Date'))
-    
-    if show_download:
-        data = future_price_times_df_show.to_csv().encode('utf-8')
-        st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
-
-    plt.close()  # Close the plot to avoid duplicate plots in Streamlit
-
-    return fig, ax
-
-
-def plot_predicted_prices_Prophec(next_times, show_table=False, show_download=False):
-    global model_prohet_ogranic_cali
-
-    # Create a dataframe with the next 60 months
-    future_next_times = model_prohet_ogranic_cali.make_future_dataframe(periods=10 + int(next_times), freq='MS')
-
-    # Make a forecast for the next 60 months
-    forecast_next_times = model_prohet_ogranic_cali.predict(future_next_times)
-
-    # make a dataframe forcecast for user
-    forecast_next_times_df = forecast_next_times[['ds', 'yhat']]
-    forecast_next_times_df.rename(columns={'ds': 'Date', 'yhat': 'Prediction'}, inplace=True)
-
-    # Visualize the forecast for the next 60 months
-    fig = model_prohet_ogranic_cali.plot(forecast_next_times, xlabel='Date', ylabel='Price')
-    ax = add_changepoints_to_plot(fig.gca(), model_prohet_ogranic_cali, forecast_next_times)
-
-    # Show table if requested
-    forecast_next_times_df_show = forecast_next_times_df.tail(next_times).reset_index(drop=True)
-    if show_table:
-        st.write(forecast_next_times_df_show.set_index('Date'))
-
-    if show_download:
-        data = forecast_next_times_df_show.to_csv().encode('utf-8')
-        st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
-
-    plt.close()  # Close the plot to avoid duplicate plots in Streamlit
-
-    return fig, ax
-
-def processing_new_data(new_data_df):
-    global scaler, reg_model
-    
-    # Tạo thêm cột season
-    new_data_df['Season'] = new_data_df.month.apply(lambda x: convert_month(x))
-    X_col = ['TotalVolume', 'type', 'year', 'month', 'day', 'Season', 'region']
-    X_new_data = new_data_df[X_col]
-
-    # Label Encoder for 'type'
-    X_new_data['type'] = X_new_data['type'].replace({'conventional': 0, 'organic': 1})
-
-    # Encoder regions
-    for idx, row in X_new_data.iterrows(): # duyệt qua từng dòng trong DataFrame
-        region = row['region'] # lấy giá trị region của dòng hiện tại
-        for r in regions:
-            if r == region:
-                X_new_data.loc[idx, r] = 1 # cập nhật giá trị 1 cho cột tương ứng với region
-            else:
-                X_new_data.loc[idx, r] = 0 # cập nhật giá trị 0 cho các cột khác
-                
-    # Drop region
-    X_new_data.drop(columns='region', inplace=True)
-
-    # Scaler
-    X_arr = scaler.transform(X_new_data)
-    X_new_data = pd.DataFrame(X_arr, columns=X_new_data.columns)
-
-    # predict
-    arr_predicted = reg_model.predict(X_new_data)
-    # Result
-    result_df = new_data_df[['TotalVolume', 'region']]
-    result_df['Prediction'] = arr_predicted
-
-    return result_df
-
-
-def read_file_txt(file_name):
-    with open(file_name, 'r') as f:
-        file_contents = f.read()
-    
-    return file_contents
-
-
-def convert_month(month):
-    if month == 3 or month == 4 or month == 5:
-        return 0
-    elif month == 6 or month == 7 or month == 8:
-        return 1
-    elif month == 9 or month == 10 or month == 11:
-        return 2
-    else:
-        return 3
+    """)
     
 
-def dummies(x,df):
-    temp = pd.get_dummies(df[x])
-    df = pd.concat([df, temp], axis = 1)
-    df.drop([x], axis = 1, inplace = True)
-    return df
-    
+def show_about_data():
+    st.markdown("""
+        - Dữ liệu được lấy trực tiếp từ máy tính tiền của các nhà bán lẻ dựa trên doanh số bán lẻ thực tế của bơ Hass.
+        - Dữ liệu đại diện cho dữ liệu lấy từ máy quét bán lẻ hàng tuần cho lượng bán lẻ (National retail volume- units) và giá bơ từ tháng 4/2015 đến tháng 3/2018.
+        - Giá Trung bình (Average Price) phản ánh giá trên một đơn vị (mỗi quả bơ), ngay cả khi nhiều đơn vị (bơ) được bán trong bao.
+        - Mã tra cứu sản phẩm - Product Lookup codes (PLU’s) trong bảng chỉ dành cho bơ Hass, không dành cho các sản phẩm khác.
+
+        Bao gồm các cột:
+
+        - Date - ngày ghi nhận
+        - AveragePrice – giá trung bình của một quả bơ
+        - Type - conventional / organic – loại: thông thường/ hữu cơ
+        - Region – vùng được bán
+        - Total Volume – tổng số bơ đã bán
+        - 4046 – tổng số bơ có mã PLU 4046 đã bán
+        - 4225 - tổng số bơ có mã PLU 4225 đã bán
+        - 4770 - tổng số bơ có mã PLU 4770 đã bán
+        - Total Bags – tổng số túi đã bán
+        - Small/Large/XLarge Bags – tổng số túi đã bán theo size
+        """)
+        
+
