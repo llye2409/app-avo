@@ -26,10 +26,10 @@ create_contact_form()
 # Infomations app
 create_infomation_app(name_app, version_app, current_time)
 # ------- lOAD MODEL----------
+# reg_model = load_reg_model()
 df = load_data()
 scaler = load_scaler()
 regions = load_region()
-# reg_model = load_reg_model()
 # rf_model_avocado_totalVolume = load_rf_model_avocado_totalVolume()
 stepwise_model_conventional_cali = load_stepwise_model_conventional_cali_model()
 model_prohet_ogranic_cali = load_model_prohet_ogranic_cali_cali_model()
