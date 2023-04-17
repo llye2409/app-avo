@@ -46,18 +46,18 @@ if add_select == 'Start prediction':
     with tab1:
         st.subheader('Predicting the average avocado price in the US with Regression')
         
-        # # Input
-        # types = st.selectbox("Type",('conventional', 'organic'),  key="selectbox_types_res")
+        # Input
+        types = st.selectbox("Type",('conventional', 'organic'),  key="selectbox_types_res")
         
-        # min_date = datetime.date(2017, 4, 1)
-        # max_date = datetime.date(2023, 4, 2)
-        # date_format = 'YYYY-WW'       
-        # date = st.date_input("Date", value=datetime.date(2018, 4, 1), min_value=min_date, max_value=max_date, key='date_input_res')
-        # day = date.day
-        # month = date.month
-        # year = date.year
+        min_date = datetime.date(2017, 4, 1)
+        max_date = datetime.date(2023, 4, 2)
+        date_format = 'YYYY-WW'       
+        date = st.date_input("Date", value=datetime.date(2018, 4, 1), min_value=min_date, max_value=max_date, key='date_input_res')
+        day = date.day
+        month = date.month
+        year = date.year
         
-        # season = convert_month(month)
+        season = convert_month(month)
         
         ## region = st.selectbox("Region",options = regions, key='selectbox_region_res')
         
@@ -65,35 +65,35 @@ if add_select == 'Start prediction':
         # total_volume_suggest = rf_model_avocado_totalVolume.predict(df_for_predict_totalVolume)
         # total_volume = st.slider('Select a value', 100, 2300000, int(total_volume_suggest), step=None, key='slider_input_total_volume')
 
-        # # Upload file
-        # st.write('Or upload a CSV file to predict more.')
-        # uploaded_file = st.file_uploader("Choose a file", type=['csv'])
-        # st.markdown("To avoid errors, please upload a CSV file in the specified format [Download template CSV file](https://drive.google.com/u/0/uc?id=1Kv5yM2s6QLu5sWdE4Qv784cE_pWja533&export=download)")
+        # Upload file
+        st.write('Or upload a CSV file to predict more.')
+        uploaded_file = st.file_uploader("Choose a file", type=['csv'])
+        st.markdown("To avoid errors, please upload a CSV file in the specified format [Download template CSV file](https://drive.google.com/u/0/uc?id=1Kv5yM2s6QLu5sWdE4Qv784cE_pWja533&export=download)")
     
-        # #Prediction
-        # if st.button('Start prediction', key='button_res'):
+        #Prediction
+        if st.button('Start prediction', key='button_res'):
 
-        #     if uploaded_file is not None:
-        #         # Xử lý dữ liệu upload
-        #         new_data_df = pd.read_csv(uploaded_file)
-        #         st.write('Display some of your data')
-        #         st.table(new_data_df.head())
-        #         result_df = processing_new_data(new_data_df)
+            if uploaded_file is not None:
+                # Xử lý dữ liệu upload
+                new_data_df = pd.read_csv(uploaded_file)
+                st.write('Display some of your data')
+                st.table(new_data_df.head())
+                result_df = processing_new_data(new_data_df)
 
-        #         # Show result
-        #         st.write('Results:')
-        #         st.dataframe(result_df.head())
+                # Show result
+                st.write('Results:')
+                st.dataframe(result_df.head())
 
-        #         # Show download file csv
-        #         data = result_df.to_csv().encode('utf-8')
-        #         st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
+                # Show download file csv
+                data = result_df.to_csv().encode('utf-8')
+                st.download_button(label="Download data as CSV", data=data, file_name='data.csv', mime='text/csv')
                 
-        #     else:                 
-        #         # Xử lý dữ liệu inputs & predict
-        #         new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
-        #         result = reg_model.predict(new_data_clean)
-        #         # Show result
-        #         st.code('predicted results: ' + str(result))
+            else:                 
+                # Xử lý dữ liệu inputs & predict
+                new_data_clean = processing_for_new_ppredict(total_volume, types, year, month, day, season, region)
+                result = reg_model.predict(new_data_clean)
+                # Show result
+                st.code('predicted results: ' + str(result))
                             
  
     # Thực hiện dự đoán với model Time series
