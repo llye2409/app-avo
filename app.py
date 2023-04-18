@@ -63,7 +63,7 @@ if add_select == 'Start prediction':
         
         df_for_predict_totalVolume = processing_for_ppredict_totalVolume(types, year, month, day, season, region)
         total_volume_suggest = rf_model_avocado_totalVolume.predict(df_for_predict_totalVolume)
-        total_volume = st.slider('Select a value for Total Volume', 100, 2300000, int(total_volume_suggest), step=None, key='slider_input_total_volume')
+        total_volume = st.slider('Total Volume', 100, 2300000, int(total_volume_suggest), step=None, key='slider_input_total_volume')
 
         # Upload file
         st.write('Or upload a CSV file to predict more.')
