@@ -93,23 +93,21 @@ def create_introdution_app():
 
 def show_about_data():
     st.markdown("""
-        - Dữ liệu được lấy trực tiếp từ máy tính tiền của các nhà bán lẻ dựa trên doanh số bán lẻ thực tế của bơ Hass.
-        - Dữ liệu đại diện cho dữ liệu lấy từ máy quét bán lẻ hàng tuần cho lượng bán lẻ (National retail volume- units) và giá bơ từ tháng 4/2015 đến tháng 3/2018.
-        - Giá Trung bình (Average Price) phản ánh giá trên một đơn vị (mỗi quả bơ), ngay cả khi nhiều đơn vị (bơ) được bán trong bao.
-        - Mã tra cứu sản phẩm - Product Lookup codes (PLU’s) trong bảng chỉ dành cho bơ Hass, không dành cho các sản phẩm khác.
+        - Data is directly collected from retailers' cash registers based on the actual retail sales of Hass avocados.
+        - The data represents weekly retail scan volume (National retail volume - units) and price of avocados from April 2015 to March 2018.
+        - Average Price reflects the price per unit (per avocado), even when multiple units (avocados) are sold in a bag.
+        - Product Lookup codes (PLU's) in the table are only for Hass avocados, not for other products.
+        The table includes the following columns:
 
-        Bao gồm các cột:
-
-        - Date - ngày ghi nhận
-        - AveragePrice – giá trung bình của một quả bơ
-        - Type - conventional / organic – loại: thông thường/ hữu cơ
-        - Region – vùng được bán
-        - Total Volume – tổng số bơ đã bán
-        - 4046 – tổng số bơ có mã PLU 4046 đã bán
-        - 4225 - tổng số bơ có mã PLU 4225 đã bán
-        - 4770 - tổng số bơ có mã PLU 4770 đã bán
-        - Total Bags – tổng số túi đã bán
-        - Small/Large/XLarge Bags – tổng số túi đã bán theo size
+        - Date - the date recorded
+        - AveragePrice - the average price of one avocado
+        - Type - conventional/organic - type: regular/organic
+        - Region - the region where avocados were sold
+        - Total Volume - the total number of avocados sold
+        - 4046 - the total number of avocados sold with PLU code 4046
+        - 4225 - the total number of avocados sold with PLU code 4225
+        - 4770 - the total number of avocados sold with PLU code 4770
+        - Total Bags - the total number of bags sold
+        - Small/Large/XLarge Bags - the total number of bags sold by size.
         """)
         
-
